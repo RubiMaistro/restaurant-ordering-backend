@@ -7,7 +7,7 @@
         public Guid Id { get; private set; }
         public Guid DishId { get; private set; }
         public int Quantity { get; private set; }
-        public Money UnitPrice { get; set; }
+        public Money? UnitPrice { get; set; }
 
         #endregion Properties
 
@@ -34,7 +34,7 @@
         #region Behaviors
 
         public Money GetTotalPrice()
-            => Money.Create(Quantity * UnitPrice.Amount, UnitPrice.Currency);
+            => Money.Create(UnitPrice != null ? Quantity * UnitPrice.Amount : 0, UnitPrice != null ? UnitPrice.Currency : Currency.HUF);
 
         #endregion Behaviors
     }
