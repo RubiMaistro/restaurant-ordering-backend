@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
+using FluentValidation;
 using Moq;
 using Restaurant.Application.DTOs;
 using Restaurant.Application.Interfaces.Repositories;
 using Restaurant.Application.Services;
+using Restaurant.Application.Validators;
 using Restaurant.Domain.Entities;
-using Restaurant.Domain.Exceptions;
 
 namespace Restaurant.Application.Tests.Orders
 {
@@ -12,11 +13,13 @@ namespace Restaurant.Application.Tests.Orders
     {
         private readonly Mock<IOrderRepository> _orderRepositoryMock;
         private readonly OrderService _sut;
+        private readonly IValidator<CreateOrderDto> _validator;
 
         public OrderServiceTests()
         {
             _orderRepositoryMock = new Mock<IOrderRepository>();
-            _sut = new OrderService(_orderRepositoryMock.Object);
+            _validator = new CreateOrderValidator();
+            _sut = new OrderService(_orderRepositoryMock.Object, _validator);
         }
 
         [Fact]
