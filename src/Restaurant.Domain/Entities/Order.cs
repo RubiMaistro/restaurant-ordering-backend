@@ -109,7 +109,7 @@ namespace Restaurant.Domain.Entities
 
         private void EnsureModifiable(OrderItem item)
         {
-            if (Status != OrderStatus.Completed)
+            if (Status == OrderStatus.Completed)
                 throw new DomainException("Orders in Completed status cannot be modified.");
 
             if (item == null)
