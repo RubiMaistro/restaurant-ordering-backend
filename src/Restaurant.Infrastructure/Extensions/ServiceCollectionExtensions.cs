@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Restaurant.Infrastructure.Persistence;
 
 namespace Restaurant.Infrastructure.Extensions
 {
@@ -9,7 +11,16 @@ namespace Restaurant.Infrastructure.Extensions
             this IServiceCollection services, 
             IConfiguration configuration)
         {
+
+            services.AddRepositories(configuration);
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("RestaurantDb");
+            });
+
             return services;
+
         }
     }
 }

@@ -9,9 +9,6 @@ namespace Restaurant.Infrastructure.Persistence
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-            optionsBuilder.UseSqlServer(
-                "Server=(localdb)\\mssqllocaldb;Database=RestaurantDb;Trusted_Connection=True;");
-
             return new AppDbContext(optionsBuilder.Options);
         }
     }
