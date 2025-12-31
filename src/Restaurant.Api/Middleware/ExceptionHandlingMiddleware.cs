@@ -32,7 +32,7 @@ namespace Restaurant.Api.Middleware
 
                 await context.Response.WriteAsJsonAsync(new
                 {
-                    Message = "Unexpected error occured."
+                    Message = "Unexpected error occured." + ex.Message
                 });
             }
         }
