@@ -4,39 +4,36 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Restaurant.Api.Filters
 {
-    public class ValidationFilter : IAsyncActionFilter
+    public class ValidationFilter<T> : IAsyncActionFilter
     {
-        private readonly ServiceProvider _serviceProvider;
+        private readonly IValidator<T> _validator;
 
-        public ValidationFilter(ServiceProvider serviceProvider)
+        public ValidationFilter(IValidator<T> validator)
         {
-            _serviceProvider = serviceProvider;
+            _validator = validator;
         }
 
         public async Task OnActionExecutionAsync(
             ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            foreach (var argument in context.ActionArguments.Values)
+            var argument = context.ActionArguments.Values
+                .OfType<T>()
+                .FirstOrDefault();
+
+            if (argument is not null)
             {
-                var validatorType = typeof(IValidator<>)
-                    .MakeGenericType(argument.GetType());
+                var validationResult = await _validator.ValidateAsync(argument);
 
-                var validator = _serviceProvider.GetService(validatorType);
-                if (validator is null) continue;
-
-                var validationContext = new ValidationContext<object>(argument);
-                var result = ((IValidator<object>)validator)
-                    .Validate(validationContext);
-
-                if (!result.IsValid)
+                if (!validationResult.IsValid)
                 {
                     context.Result = new BadRequestObjectResult(
-                        result.Errors.Select(e => new
+                        validationResult.Errors.Select(e => new
                         {
                             e.PropertyName,
                             e.ErrorMessage
-                        }));
+                        })
+                    );
                     return;
                 }
             }
