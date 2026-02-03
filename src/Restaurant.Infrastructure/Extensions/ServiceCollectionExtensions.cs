@@ -12,6 +12,11 @@ namespace Restaurant.Infrastructure.Extensions
             IConfiguration configuration)
         {
 
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("RestaurantDb");
+            });
+
             services.AddRepositories(configuration);
 
             return services;
