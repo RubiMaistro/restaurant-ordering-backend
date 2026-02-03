@@ -14,11 +14,12 @@ namespace Restaurant.Domain.Entities
         public Guid Id { get; set; }
         public OrderStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Money TotalAmount { get; private set; } = Money.Create(0);
 
         #endregion Properties
 
         #region Data
-        
+
         private readonly List<OrderItem> _items = new();
         public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
@@ -42,6 +43,7 @@ namespace Restaurant.Domain.Entities
         {
             EnsureModifiable(item);
             _items.Add(item);
+            RecalculateTotal();
         }
 
         public void RemoveItem(Guid orderItemId)
@@ -53,16 +55,7 @@ namespace Restaurant.Domain.Entities
 
             EnsureModifiable(item);
             _items.Remove(item);
-        }
-
-        public Money GetTotalAmount()
-        {
-            Money total = Money.Create(0);
-
-            foreach (var item in _items)
-                total += item.GetTotalPrice();
-            
-            return total;
+            RecalculateTotal();
         }
 
         public void Submit()
@@ -114,6 +107,21 @@ namespace Restaurant.Domain.Entities
 
             if (item == null)
                 throw new DomainException("Order item cannot be null.");
+        }
+
+        private Money RecalculateTotal()
+        {
+            return CalculateTotalAmount();
+        }
+
+        private Money CalculateTotalAmount()
+        {
+            Money total = Money.Create(0);
+
+            foreach (var item in _items)
+                total += item.GetTotalPrice();
+
+            return total;
         }
 
         #endregion Helpers
