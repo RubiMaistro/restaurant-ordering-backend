@@ -49,12 +49,7 @@ namespace Restaurant.Application.Services
             if (order is null)
                 return null;
 
-            return new OrderDto(
-                order.Id,
-                order.Status,
-                order.GetTotalAmount().Amount,
-                order.CreatedAt
-            );
+            return order;
         }
     }
 }
