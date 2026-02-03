@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Restaurant.Domain.Entities;
+using Restaurant.Domain.Enums;
+using Restaurant.Domain.ValueObjects;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations
 {
@@ -16,6 +18,22 @@ namespace Restaurant.Infrastructure.Persistence.Configurations
 
             builder.Property(o => o.CreatedAt)
                 .IsRequired();
+
+            builder.OwnsOne(
+                typeof(Money),
+                "TotalAmount",
+                money =>
+                {
+                    money.Property<decimal>(nameof(Money.Amount))
+                        .HasConversion<decimal>()
+                        .HasPrecision(18, 2)
+                        .IsRequired();
+
+                    money.Property<Currency>(nameof(Money.Currency))
+                        .HasConversion<string>()
+                        .HasMaxLength(3)
+                        .IsRequired();
+                });
 
             // Optimistic concurrency
             builder.Property<byte[]>("RowVersion")

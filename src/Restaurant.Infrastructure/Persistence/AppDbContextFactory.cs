@@ -9,6 +9,11 @@ namespace Restaurant.Infrastructure.Persistence
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
+            optionsBuilder.UseInMemoryDatabase("RestaurantDb");
+
+            // Use SQL Server for design-time DbContext creation
+            //optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=RestaurantDb;Trusted_Connection=True;MultipleActiveResultSets=true");  
+
             return new AppDbContext(optionsBuilder.Options);
         }
     }
